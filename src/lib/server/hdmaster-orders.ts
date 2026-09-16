@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/lib/auth/middleware";
+import { getSql } from "@/lib/db";
 import { buildQuote } from "./quote";
 import type { CartLineInput } from "@/lib/market-types";
 
@@ -22,33 +23,25 @@ export const placeOrderViaHDmaster = createServerFn({ method: "POST" })
     if (!data.lines.length) throw new Error("Cart is empty.");
     if (!data.idempotencyKey || data.idempotencyKey.length < 8) throw new Error("Idempotency key is required.");
 
-    const first = false;
-    const built = await buildQuote({
-      restaurantId: data.restaurantId,
-      zoneId: data.zoneId,
-      lat: data.lat,
-      lng: data.lng,
-      coupon: data.coupon,
-      lines: data.lines,
-    }, first);
+    const built = await buildQuote({ restaurantId: data.restaurantId, zoneId: data.zoneId, lat: data.lat, lng: data.lng, coupon: data.coupon, lines: data.lines }, false);
     if (built.result.quote.blockers.length) throw new Error(`Order blocked: ${built.result.quote.blockers.join(", ")}`);
 
     const baseUrl = process.env.HDMASTER_URL?.replace(/\/$/, "");
     const token = process.env.ROSHOI_SERVICE_TOKEN?.trim();
     if (!baseUrl || !token) throw new Error("HDmaster integration is not configured.");
 
+    const sql = await getSql();
+    const zones = await sql<{ city_id: string }>`select city_id from zones where id = ${built.zoneId} limit 1`;
+    if (!zones[0]?.city_id) throw new Error("Delivery zone is not configured.");
+
     const q = built.result.quote;
     const response = await fetch(`${baseUrl}/v1/admin/customer-orders`, {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${token}`,
-        "Idempotency-Key": data.idempotencyKey,
-      },
+      headers: { "content-type": "application/json", authorization: `Bearer ${token}`, "Idempotency-Key": data.idempotencyKey },
       body: JSON.stringify({
         customerRef: context.userId,
         restaurantId: built.restaurantId,
-        cityId: built.result.quote.cityId ?? data.zoneId,
+        cityId: zones[0].city_id,
         zoneId: built.zoneId,
         paymentMethod: data.paymentMethod,
         foodPaise: q.foodSubtotalPaise,
