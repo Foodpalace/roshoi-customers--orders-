@@ -19,7 +19,7 @@ export const DEFAULT_CONFIG: PublicAppConfig = {
   invoice: { companyName: "Order King Foods", logoUrl: "", address: "Sribhumi, Assam, India", gstin: "PENDING", fssai: "PENDING", supportContact: "support@orderking.in", footer: "Thank you for ordering.", legalFooter: "This is not a tax invoice until GSTIN is registered." },
   restaurantFacing: { portalName: "Order King for Kitchens", dashboardLogoUrl: "", notificationSender: "Order King Kitchens", settlementStatementBrand: "Order King" },
   business: { legalEntityName: "Order King Foods", country: "IN", defaultCityId: "city_sribhumi", defaultLanguage: "en", supportedLanguages: ["en", "bn", "as", "hi"], timezone: "Asia/Kolkata", currency: "INR", currencyMinorName: "paise" },
-  marketplace: { defaultCommissionBps: 1000, allowedCommissionBps: [0, 500, 800, 1000, 1200], serviceFeePaise: 0, serviceFeeBps: 0, packagingDefaultPaise: 0, minOrderPaise: 8000, deliveryBasePaise: 2500, deliveryPerKmPaise: 800, deliveryFreeOverPaise: 39900, riderSpeedKmh: 18, orderPrefix: "O", allowDevTools: true, sampleCatalogueBanner: true, launchMode: "development" },
+  marketplace: { defaultCommissionBps: 1000, allowedCommissionBps: [0, 500, 800, 1000, 1200], serviceFeePaise: 0, serviceFeeBps: 0, packagingDefaultPaise: 0, minOrderPaise: 8000, deliveryBasePaise: 2500, deliveryPerKmPaise: 800, deliveryFreeOverPaise: 39900, riderSpeedKmh: 18, orderPrefix: "R", allowDevTools: true, sampleCatalogueBanner: true, launchMode: "development" },
   tax: { menuPricesIncludeTax: true, menuTaxBps: 500, deliveryTaxBps: 0, serviceTaxBps: 1800, commissionTaxBps: 1800, taxLabel: "GST" },
   notification: { inAppEnabled: true, pushProvider: "none", smsProvider: "none", whatsappProvider: "none", emailProvider: "none" },
 };
